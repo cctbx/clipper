@@ -62,7 +62,7 @@ int main( int argc, char** argv )
     }
   }
   if ( args.size() <= 1 ) {
-    std::cout << "Usage: cmakereference\n\t-pdbid <accession-code>\n\t-pdbfile <.ent.Z-file>\n\t-rflfile <.ent.Z-file>\n\t-resolution <reso>\n\tGenerate reference structure for pirate.\nIf no .ent.Z files are given, they are fetched by ftp if possible.\n";
+    std::cout << "Usage: cmakereference\n\t-pdbid <accession-code>\n\t-pdbin <.ent.Z-file>\n\t-cifin <.ent.Z-file>\n\t-resolution <reso>\n\tGenerate reference structure for pirate.\nIf no .ent.Z files are given, they are fetched by ftp if possible.\n";
     exit(1);
   }
 

@@ -66,6 +66,11 @@ namespace std { using ::floor; using ::ceil; using ::fabs; using ::fmod; using :
 #include <cmath>
 #endif
 
+/* fix for intel compilers - undef isnan macro */
+#if defined(isnan)
+#undef isnan
+#endif
+
 /* numeric types, for where they are critical */
 
 namespace clipper {

@@ -182,7 +182,7 @@ void CIFfile::close_read()
 
     std::string mess = "CIFfile: close_read  - Could not read: ";
     mess += filename.c_str();
-    mess += "dirty mmCIF file? "; 
+    mess += " Dirty mmCIF file? ";
     Message::message( Message_warn( mess )); 
   } else { 
 
@@ -264,7 +264,7 @@ void CIFfile::close_read()
     }
   }
   if (f_phi_i != NULL)
-     std::cout << n_calc_data << "calculated data read on close_read()" << std::endl;
+     std::cout << n_calc_data << " calculated data read on close_read()" << std::endl;
   mode = NONE;
 }
 
@@ -292,7 +292,7 @@ Resolution CIFfile::resolution( const Cell& cell ) const
   if (ierr!=CIFRC_Ok) { 
     std::string mess = "CIFfile: resolution  - Could not read: ";
     mess += filename.c_str();
-    mess += "dirty mmCIF file? "; 
+    mess += ". Dirty mmCIF file? "; 
     Message::message( Message_warn( mess )); 
   } else { // read the reflections from the phs
     for(int i=0; i<ciffile.GetNofData(); i++) {  
@@ -384,7 +384,7 @@ void CIFfile::import_hkl_info( HKL_info& target )
      
 	std::string mess = "CIFfile: import_hkl_data  - Could not read: ";
 	mess += filename.c_str();
-	mess += "dirty mmCIF file? "; 
+	mess += ". Dirty mmCIF file? "; 
 	Message::message( Message_warn( mess )); 
 
      } else { 
@@ -401,9 +401,7 @@ void CIFfile::import_hkl_info( HKL_info& target )
 
 	      PCMMCIFLoop mmCIFLoop = data->GetLoop( (char *) cat_name.c_str() );
 
-	      if (mmCIFLoop == NULL) { 
-
-	      } else {
+	      if (mmCIFLoop) {
 
 		 if (cat_name == "_refln") { 
 
@@ -418,7 +416,7 @@ void CIFfile::import_hkl_info( HKL_info& target )
 		       ierr += mmCIFLoop->GetInteger(k, "index_k", j); 
 		       ierr += mmCIFLoop->GetInteger(l, "index_l", j);
 
-		       // cout << "import_hkl_info ierr: " << ierr << endl; 
+		       // std::cout << "import_hkl_info ierr: " << ierr << std::endl; 
 
 		       if (!ierr) {
 			  HKL hkl(h,k,l);
@@ -540,7 +538,7 @@ CIFfile::set_cell_symm_reso_by_cif(std::string cif_file_name) {
 	    }
 	 }
 
-	 
+	 // Try reading symmetry construction
 	 mmCIFStruct = data->GetStructure("_symmetry");
 
 	 if (mmCIFStruct != NULL) { 
@@ -556,7 +554,7 @@ CIFfile::set_cell_symm_reso_by_cif(std::string cif_file_name) {
 			hmsymm = str;
 			space_group.init(clipper::Spgr_descr(str));
 			clipper_symm_set_flag = 1;
-			std::cout << "got space_group from cif: "
+			std::cout << "INFO space_group from symmetry in cif: "
 				  << space_group.descr().symbol_hm() << std::endl;
 		     }
 		  }
@@ -564,6 +562,41 @@ CIFfile::set_cell_symm_reso_by_cif(std::string cif_file_name) {
 	    }
 	 }
 
+	 // Have another try for symmetry: e.g. from shelx cif files:
+	 // (such files tell us the symmetry operators, so we can get
+	 // the space group from those rather than the name using a
+	 // clipper function).
+	 for (int icat=0; icat<data->GetNumberOfCategories(); icat++) { 
+
+	    PCMMCIFCategory cat = data->GetCategory(icat);
+
+	    std::string cat_name(cat->GetCategoryName()); 
+
+	    PCMMCIFLoop mmCIFLoop = data->GetLoop( (char *) cat_name.c_str() );
+	    
+	    if (mmCIFLoop) { 
+	       if (cat_name == "_symmetry_equiv") {
+		  std::cout << "Found symmetry equivalents....." << std::endl;
+		  std::string symmetry_ops("");
+		  for (int j=0; j<mmCIFLoop->GetLoopLength(); j++) {
+		     char *str = mmCIFLoop->GetString("pos_as_xyz", j, ierr);
+		     std::cout << "INFO:: Found cif symmetry operator " << str << std::endl;
+		     symmetry_ops += str;
+		     symmetry_ops += " ; ";
+		  }
+		  if (symmetry_ops != "") {
+		     clipper_symm_set_flag = 1;
+		     space_group.init(clipper::Spgr_descr(symmetry_ops));
+		     std::cout << "INFO:: space_group from symm ops in cif: "
+			       << space_group.descr().symbol_hm() << std::endl;
+		  }
+	       }
+	    }
+	 }
+
+	 
+	 // Reflection meta data:
+	 // 
 	 mmCIFStruct = data->GetStructure("_reflns");
 	 if (mmCIFStruct != NULL) { 
 	    cat_name_str = mmCIFStruct->GetCategoryName();
