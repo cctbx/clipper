@@ -243,10 +243,12 @@ int main( int argc, char** argv )
       scer1[res_bins]  += w * fphi1[ih].f() * fphi1[ih].f();
       scer2[res_bins]  += w * fphi2[ih].f() * fphi2[ih].f();
       scer12[res_bins] += w * fphi1[ih].f() * fphi2[ih].f() * cosd;
-      bin = int((double(fom_bins)-1.0e-6)*phiw1[ih].fom());
+      bin = clipper::Util::bound(0, int(double(fom_bins)*phiw1[ih].fom()),
+				 fom_bins-1);
       nrfl1[bin] += 1.0;
       mcosd1[bin] += cosd;
-      bin = int((double(fom_bins)-1.0e-6)*phiw2[ih].fom());
+      bin = clipper::Util::bound(0, int(double(fom_bins)*phiw2[ih].fom()),
+				 fom_bins-1);
       nrfl2[bin] += 1.0;
       mcosd2[bin] += cosd;
     }

@@ -189,7 +189,7 @@ template<class T> bool SFweight_spline<T>::operator() ( HKL_data<datatypes::F_ph
 
   // undo scaling on fb, fd
   for ( ih = hkls.first(); !ih.last(); ih.next() ) {
-    const ftype s = sqrt( 1.0/rfn_fo.f(ih) );
+    const ftype s = 1.0 / sqrt( rfn_fo.f(ih) );
     fb[ih].scale( s );
     fd[ih].scale( s );
   }

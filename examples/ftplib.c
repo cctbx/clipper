@@ -58,6 +58,12 @@
 #define SETSOCKOPT_OPTVAL_TYPE (void *)
 #endif
 
+#if defined(__osf__)
+#define SOCKLEN_TYPE int
+#else
+#define SOCKLEN_TYPE socklen_t
+#endif
+
 #define FTPLIB_BUFSIZ 8192
 #define ACCEPT_TIMEOUT 30
 
@@ -584,7 +590,7 @@ static int FtpOpenPort(netbuf *nControl, netbuf **nData, int mode, int dir)
 	struct sockaddr_in in;
     } sin;
     struct linger lng = { 0, 0 };
-    unsigned int l;
+    SOCKLEN_TYPE l;
     int on=1;
     netbuf *ctrl;
     char *cp;
@@ -727,7 +733,7 @@ static int FtpAcceptConnection(netbuf *nData, netbuf *nControl)
 {
     int sData;
     struct sockaddr addr;
-    unsigned int l;
+    SOCKLEN_TYPE l;
     int i;
     struct timeval tv;
     fd_set mask;

@@ -1,5 +1,6 @@
 Latest changes:
 <dl>
+<dt>22/10/04: <dd> Added Fortran sfcalc demo code. Fix in SF weighting 'best' coeffs (from RWGK).
 <dt>12/10/04: <dd> Fixes and testing of SF calc, SF weighting. Additional cctbx methods. cmakereference app for pirate.
 <dt>16/07/04: <dd> Add some additional spacegroup methods, extend utilities and add 2 new utilties programs.
 <dt>25/06/04: <dd> Fix for compilation -O3 on gcc 3.2, other portability fixes, add 1 new jiffy programs.
