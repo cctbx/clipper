@@ -292,7 +292,7 @@ Spgr_descr::Symop_codes Spgr_descr::Symop_codes::expand() const
 
 Spgr_descr::Symop_codes Spgr_descr::Symop_codes::primitive_noninversion_ops() const
 {
-  const Symop_codes& ops = (*this);
+  //const Symop_codes& ops = (*this);
   Symop_codes pops = primitive_ops();
   if ( inversion_ops().size() > 1 ) {
     Symop_codes nops;
