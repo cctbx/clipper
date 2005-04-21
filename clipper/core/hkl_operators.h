@@ -92,7 +92,7 @@ namespace clipper
     on the phase circle, acentrics by a list of values. The values can
     be indexed like and array. The phase() function returns the phase
     corresponding to the given array index. Conversion to and from
-    Hendrickson-Lattmann coefficients is provided. The object is
+    Hendrickson-Lattman coefficients is provided. The object is
     templatised on the sampling of the phase circle. */
   template<int N> class LogPhaseProb {
   public:

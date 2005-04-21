@@ -49,7 +49,7 @@ efficient manner.
 The data objects are templates which can hold data of any type. In the
 case of a map, this type will usually be `double' or `float', however
 in the case of reciprocal space data the types are often more complex,
-for example `magnitude and phase' (F_phi) or Hendrickson-Lattmann
+for example `magnitude and phase' (F_phi) or Hendrickson-Lattman
 coefficient (ABCD).
 
 <li> \ref ss_io
@@ -360,7 +360,7 @@ object. It simply stores a list of data of that type.
 
 Data types typically include several values. Examples include measured
 X-ray intensity and its standard deviation (I_sigI), structure factor
-magnitude and phase (F_sigF), and Hendrickson-Lattmann coefficients
+magnitude and phase (F_sigF), and Hendrickson-Lattman coefficients
 (ABCD). Data types are derived from a base type (Datatype_base), and
 should override all the methods of that type. This will allow the data
 to be automatically transformed about reciprocal space, and imported

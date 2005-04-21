@@ -81,7 +81,7 @@ initialiser.
 
 Data types typically include several values. Examples include measured
 X-ray intensity and its standard deviation (I_sigI), structure factor
-magnitude and phase (F_sigF), and Hendrickson-Lattmann coefficients
+magnitude and phase (F_sigF), and Hendrickson-Lattman coefficients
 (ABCD). Data types are derived from a base type (Datatype_base), and
 should override all the methods of that type. This will allow the data
 to be automatically transformed about reciprocal space, and imported
@@ -238,7 +238,7 @@ operations.
 
 Arithmetic operators are defined for the addition, subtraction, and
 scaling of map coefficients (i.e. HKL_data<datatypes::F_phi>), and for
-the addition and scaling of Hendrickson-Lattmann coefficients (class
+the addition and scaling of Hendrickson-Lattman coefficients (class
 HKL_data<datatypes::ABCD>). Thus, to add two lists of map
 coefficients, the following code is required:
 \code
@@ -294,7 +294,7 @@ constructed on the fly.
 
 Some computation operators simply convert a datalist of one type to a
 datalist of another type. For example, you can convert a phase and
-weight to Hendrickson Lattmann coefficients. (Of course C and D will
+weight to Hendrickson Lattman coefficients. (Of course C and D will
 be 0, because a phase and weight can only describe a unimodal
 distribution).
 \code
@@ -330,7 +330,7 @@ and U-value of 0.5 to a list of reflections, use the following code:
 
 Computation operators are provided for performing addition, subtraction
 and scaling of map coefficients (i.e. F_phi), addition and computation
-of Hendrickson Lattmann coefficients, and for scaling data. It is
+of Hendrickson Lattman coefficients, and for scaling data. It is
 fairly simple to define new computation operators, see
 core/hkl_compute.h.
 

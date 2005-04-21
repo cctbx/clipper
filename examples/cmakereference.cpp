@@ -9,7 +9,11 @@
 #include "ccp4-extras.h"
 
 extern "C" {
-#include <unistd.h>
+#if defined _MSC_VER
+ #include <io.h>
+#else
+ #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -87,9 +91,6 @@ int main( int argc, char** argv )
   if ( ptrscr != NULL )
     tmpdir = std::string(ptrscr);
 
-  // provide instructions
-  std::cout << "\nAttempting to connect to EBI/MSD for file download. If this step fails, use \nyour preferred ftp client to fetch the files, then re-run giving the \nfilenames as arguments, or use the EBI/MSD website.\n\nftp " << host << "\n" << user << "\n" << pass << "\nbinary\ncd " << pdbdir << "\nget pdb" << pdbid << ".ent.Z\ncd " << rfldir << "\nget r" << pdbid << "sf.ent.Z\nquit\n\n";
-
   // messages
   clipper::Message_fatal noserver( "Unable to connect to server. Try manual ftp and give filenames." );
   clipper::Message_fatal nologin( "Unable to login to server. Try manual ftp and give filenames." );
@@ -100,6 +101,9 @@ int main( int argc, char** argv )
 
   // ftp the files, if required
   if ( pdbfilez == "NONE" || rflfilez == "NONE" ) {
+
+    // provide instructions
+    std::cout << "\nAttempting to connect to EBI/MSD for file download. If this step fails, use \nyour preferred ftp client to fetch the files, then re-run giving the \nfilenames as arguments, or use the EBI/MSD website.\n\nftp " << host << "\n" << user << "\n" << pass << "\nbinary\ncd " << pdbdir << "\nget pdb" << pdbid << ".ent.Z\ncd " << rfldir << "\nget r" << pdbid << "sf.ent.Z\nquit\n\n";
 
     netbuf *pbuf;
     int err;
@@ -139,7 +143,7 @@ int main( int argc, char** argv )
   clipper::String pdbfile = pdbfilez.substr( 0, pdbfilez.length() - 2 );
   fdip = open( pdbfilez.c_str(), O_RDONLY );
   if ( fdip < 0 ) clipper::Message::message( nordc );
-  fdop = creat( pdbfile.c_str(), S_IRUSR|S_IWUSR );
+  fdop = open( pdbfile.c_str(), O_CREAT|O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE );
   if ( fdop < 0 ) clipper::Message::message( nowrc );
   decompress( fdip, fdop );
   close( fdip );
@@ -149,7 +153,7 @@ int main( int argc, char** argv )
   clipper::String rflfile = rflfilez.substr( 0, rflfilez.length() - 2 );
   fdip = open( rflfilez.c_str(), O_RDONLY );
   if ( fdip < 0 ) clipper::Message::message( nordc );
-  fdop = creat( rflfile.c_str(), S_IRUSR|S_IWUSR );
+  fdop = open( rflfile.c_str(), O_CREAT|O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE );
   if ( fdop < 0 ) clipper::Message::message( nowrc );
   decompress( fdip, fdop );
   close( fdip );
