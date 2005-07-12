@@ -86,11 +86,13 @@ namespace clipper {
   typedef unsigned long uitype64;
 # define CLIPPER_NAN_MASK_A_64 0x7ff0000000000000UL
 # define CLIPPER_NAN_MASK_B_64 0x000fffffffffffffUL
+# define CLIPPER_NULL_MASK_64  0x7ff8000000000000UL
 #else
   typedef long long itype64;
   typedef unsigned long long uitype64;
 # define CLIPPER_NAN_MASK_A_64 0x7ff0000000000000ULL
 # define CLIPPER_NAN_MASK_B_64 0x000fffffffffffffULL
+# define CLIPPER_NULL_MASK_64  0x7ff8000000000000ULL
 #endif
 }
 

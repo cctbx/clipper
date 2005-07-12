@@ -42,6 +42,7 @@
 
 
 #include "clipper_util.h"
+#include <stdexcept>
 
 
 namespace clipper {
@@ -72,11 +73,14 @@ const Util util;  //!< instatiate to initialise statics
 
 Util::Util()
 {
-  ftype32 f;
-  *((uitype32*)&f) = CLIPPER_NULL_MASK_32;
-  nanf_ = float( f );
-  nand_ = double( f );
-  nan_ = ftype( f );
+  *((uitype32*)&nanf_) = CLIPPER_NULL_MASK_32;
+  *((uitype64*)&nand_) = CLIPPER_NULL_MASK_64;
+  if      ( sizeof(ftype) == 4 )
+    *((uitype32*)&nan_) = CLIPPER_NULL_MASK_32;
+  else if ( sizeof(ftype) == 8 )
+    *((uitype64*)&nan_) = CLIPPER_NULL_MASK_64;
+  else
+    throw std::runtime_error("sizeof(ftype) not supported.");
 }
 
 /*! \param x The argument \return I1(x)/I0(x) */
