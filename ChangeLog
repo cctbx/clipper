@@ -1,5 +1,6 @@
 Latest changes:
 <dl>
+<dt>17/03/05: <dd> Minor portability fixes for CCP4 release. 'Lattman' spelling fix (sorry).
 <dt>25/02/05: <dd> Minor portability fixes for CCP4 release.
 <dt>22/11/04: <dd> Minor portability fixes for CCP4 release.
 <dt>22/10/04: <dd> Added Fortran sfcalc demo code. Fix in SF weighting 'best' coeffs (from RWGK).

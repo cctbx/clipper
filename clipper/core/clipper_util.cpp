@@ -42,7 +42,6 @@
 
 
 #include "clipper_util.h"
-#include <stdexcept>
 
 
 namespace clipper {
@@ -80,7 +79,7 @@ Util::Util()
   else if ( sizeof(ftype) == 8 )
     *((uitype64*)&nan_) = CLIPPER_NULL_MASK_64;
   else
-    throw std::runtime_error("sizeof(ftype) not supported.");
+    /* fail on build */;
 }
 
 /*! \param x The argument \return I1(x)/I0(x) */

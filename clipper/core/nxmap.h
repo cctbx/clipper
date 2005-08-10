@@ -365,7 +365,7 @@ namespace clipper
     \param grid The grid sampling of the given unit cell.
     \param grid_extent The map extent within that cell. */
   template<class T> void NXmap<T>::init( const Cell& cell, const Grid_sampling& grid, const Grid_range& grid_extent )
-    { NXmap_base::init( cell, grid, grid_extent ); list.resize( grid.size() ); }
+    { NXmap_base::init( cell, grid, grid_extent ); list.resize( grid_extent.size() ); }
 
 
   /*! The value of the map at the desired non-grid map

@@ -115,6 +115,7 @@ namespace clipper {
     //! constructor: shorthand for constructor+operator
     MapFilter_fft( clipper::Xmap<T>& result, const clipper::Xmap<T>& xmap, MapFilterFn_base& fltr, const ftype scale = 1.0, const TYPE type = NONE );
     bool operator() ( clipper::Xmap<T>& result, const clipper::Xmap<T>& xmap ) const;
+    bool operator() ( clipper::NXmap<T>& result, const clipper::NXmap<T>& nxmap ) const;
   private:
     const MapFilterFn_base* fltr_;
     ftype scale_;

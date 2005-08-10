@@ -193,16 +193,43 @@ int main()
     if ( fabs(r1[ix] - r2[ix]) > 0.001 )
       std::cout << ix.coord().format() << "  \t" << r1[ix] << "  \t" << r2[ix] << "\n";
 
-  MapFilterFn_step step( 2.5 );
+  MapFilterFn_step step( 8.5 );
   MapFilter_slow<float> fltr1( step, 1.0, MapFilter_slow<float>::Relative );
   MapFilter_fft<float>  fltr2( step, 1.0, MapFilter_fft<float>::Relative );
-  Xmap<float> f1, f2;
+  Xmap<float> f1, f2, f3;
   fltr1( f1, xmap );
   fltr2( f2, xmap );
 
   for ( ix = xmap.first(); !ix.last(); ix.next() )
-    if ( fabs(f1[ix] - f2[ix]) > 0.001 )
+    if ( fabs(f1[ix] - f2[ix]) > -0.001 )
       std::cout << ix.coord().format() << "  \t" << f1[ix] << "  \t" << f2[ix] << "  \t" << xmap[ix] << "\n";
 
+  Grid_range gr( Coord_grid(0,0,0),
+		 Coord_grid( xmap.grid_sampling().nu()-2,
+			     xmap.grid_sampling().nv()-2,
+			     xmap.grid_sampling().nw()-2 ) );
+  NXmap<float> nxmap( xmap.cell(), xmap.grid_sampling(), gr );
+  NXmap<float>::Map_reference_index inx;
 
+  for ( inx = nxmap.first(); !inx.last(); inx.next() )
+    nxmap[inx] = xmap.get_data( inx.coord() + gr.min() );
+  NXmap<float> nxr;
+  std::cout << "do filter\n";
+  fltr2( nxr, nxmap );
+  std::cout << "done filter\n";
+
+  f3.init( xmap.spacegroup(), xmap.cell(), xmap.grid_sampling() );
+  for ( inx = nxmap.first(); !inx.last(); inx.next() )
+    f3.set_data( inx.coord() + gr.min(), nxr[inx] );
+
+  for ( c.w() = gr.min().w(); c.w() <= gr.max().w(); c.w()++ ) {
+    for ( c.v() = gr.min().v(); c.v() <= gr.max().v(); c.v()++ ) {
+      for ( c.u() = gr.min().u(); c.u() <= gr.max().u(); c.u()++ ) {
+	std::cout.width(4);
+	std::cout << rint(10000*(f1.get_data(c)-nxr.get_data(c-gr.min()))) << " ";
+      }
+      std::cout << "\n";
+    }
+    std::cout << c.w() << "\n";
+  }
 }

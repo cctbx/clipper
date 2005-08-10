@@ -212,6 +212,116 @@ template<class T> bool MapFilter_fft<T>::operator() ( clipper::Xmap<T>& result, 
   return true;
 }
 
+/*! Apply the filter to a given map.
+  \param result The filtered map.
+  \param nxmap The map to be filtered. */
+template<class T> bool MapFilter_fft<T>::operator() ( clipper::NXmap<T>& result, const clipper::NXmap<T>& nxmap ) const
+{
+  const MapFilterFn_base& fltr = *fltr_;
+  const Grid& gnx = nxmap.grid();
+  result.init( gnx, nxmap.operator_orth_grid() );
+
+  // Now make fft grid compatible with this NXmap grid
+  Grid_sampling nuvw( gnx.nu()+2, gnx.nv()+2, gnx.nw()+2 );
+  for ( int i = 0; i < 3; i++ ) {  // find most efficient sampling
+    int j, l, m, n, nbest = 0;
+    ftype t, tbest = 1.0e12;
+    for ( n = nuvw[i]; n < 2*nuvw[i]; n++ ) {
+      if ( n % 2 == 0 ) {
+        l = 0; // sum of factors (approx. log n)
+        m = n; // what is left in factorisation
+        for ( j = 2; j <= n; j++ )
+          while ( m%j == 0 ) { m /= j; l += j; }
+        // FFT time O( n * l ) - introduce an extra n^2 for 3D.
+        t = pow( ftype(n), 3 ) * ftype(l);
+        if ( t < tbest ) { nbest = n; tbest = t; }
+      }
+    }
+    nuvw[i] = nbest;
+  }
+  const Grid_sampling& g = nuvw;
+
+  // Get grid skew matrix
+  nxmap.operator_grid_orth().rot(); Coord_orth::zero();
+  RTop<> rtop( nxmap.operator_grid_orth().rot(), Coord_orth::zero() );
+
+  // make the fft maps
+  FFTmap_p1 map( g );
+  FFTmap_p1 flt( g );
+
+  // fill fft map from nx map
+  Coord_grid l( (g.nu()-gnx.nu())/2,(g.nv()-gnx.nv())/2,(g.nw()-gnx.nw())/2 );
+  Coord_grid h( l + gnx - Coord_grid(1,1,1) );
+  typedef NXmap<float>::Map_reference_index MRI;
+  for ( MRI ix = nxmap.first(); !ix.last(); ix.next() )
+    map.real_data( ix.coord()+l ) = nxmap[ix];
+  // mirror the remaining points
+  Coord_grid iw, im;
+  for ( iw.u() = 0; iw.u() < g.nu(); iw.u()++ )
+    for ( iw.v() = 0; iw.v() < g.nv(); iw.v()++ )
+      for ( iw.w() = 0; iw.w() < g.nw(); iw.w()++ ) {
+	im = iw;
+	if ( im.u() < l.u() ) im.u() = l.u() + ( l.u() - im.u() );
+	if ( im.v() < l.v() ) im.v() = l.v() + ( l.v() - im.v() );
+	if ( im.w() < l.w() ) im.w() = l.w() + ( l.w() - im.w() );
+	if ( im.u() > h.u() ) im.u() = h.u() + ( h.u() - im.u() );
+	if ( im.v() > h.v() ) im.v() = h.v() + ( h.v() - im.v() );
+	if ( im.w() > h.w() ) im.w() = h.w() + ( h.w() - im.w() );
+	map.real_data( iw ) = map.real_data( im );
+      }
+
+  // first determine the effective radius of the radial function
+  const int nrad = 1000;
+  const ftype drad = 0.25;
+  int i;
+  ftype r, sum[nrad];
+  for ( i = 0; i < nrad; i++ ) {
+    r = drad * ( ftype(i) + 0.5 );
+    sum[i] = r*r*fabs(fltr(r));
+  }
+  for ( i = 1; i < nrad; i++ ) sum[i] += sum[i-1];
+  for ( i = 0; i < nrad; i++ ) if ( sum[i] > 0.99*sum[nrad-1] ) break;
+  ftype rad = drad * ( ftype(i) + 1.0 );
+
+  // fill the radial function map
+  Coord_grid c, half( g.nu()/2, g.nv()/2, g.nw()/2 );
+  ftype64 f000 = 0.0;
+  for ( iw.u() = 0; iw.u() < g.nu(); iw.u()++ )
+    for ( iw.v() = 0; iw.v() < g.nv(); iw.v()++ )
+      for ( iw.w() = 0; iw.w() < g.nw(); iw.w()++ ) {
+	c = (iw + half).unit(g) - half;
+	r = sqrt( Coord_orth(rtop*c.coord_map()).lengthsq() );
+	if ( r < rad ) {
+	  r = fltr(r);
+	  f000 += r;
+	  flt.real_data( iw ) = r;
+	}
+      }
+
+  // calc scale factor
+  ftype32 scale = 1.0;
+  if ( type_ == Absolute ) scale = scale_;
+  if ( type_ == Relative ) scale = scale_ / f000;
+
+  // fft
+  flt.fft_x_to_h( 1.0 );
+  map.fft_x_to_h( 1.0 );
+  // do filter
+  const Grid& gh = map.grid_reci();
+  for ( c.u() = 0; c.u() < gh.nu(); c.u()++ )
+    for ( c.v() = 0; c.v() < gh.nv(); c.v()++ )
+      for ( c.w() = 0; c.w() < gh.nw(); c.w()++ )
+	map.cplx_data( c ) = scale * map.cplx_data(c) * flt.cplx_data(c);
+  // invert
+  map.fft_h_to_x( map.grid_real().size() );
+
+  // store
+  for ( MRI ix = nxmap.first(); !ix.last(); ix.next() )
+    result[ix] = map.real_data( ix.coord()+l );
+
+  return true;
+}
+
 // compile templates
 
 template class MapFilter_slow<ftype32>;
