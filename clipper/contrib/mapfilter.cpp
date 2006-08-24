@@ -1,9 +1,9 @@
 /* mapfilter.cpp: Electron density calculation implementation */
 //C Copyright (C) 2000-2004 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
 //L
-//L  This library is free software and is distributed under the terms and
-//L  conditions of the CCP4 licence agreement as `Part 0' (Annex 2)
-//L  software, which is version 2.1 of the GNU Lesser General Public
+//L  This library is free software and is distributed under the terms
+//L  and conditions of version 2.1 of the GNU Lesser General Public
 //L  Licence (LGPL) with the following additional clause:
 //L
 //L     `You may also combine or link a "work that uses the Library" to
@@ -152,7 +152,6 @@ template<class T> bool MapFilter_fft<T>::operator() ( clipper::Xmap<T>& result, 
 {
   const MapFilterFn_base& fltr = *fltr_;
   const Grid_sampling& g = xmap.grid_sampling();
-  result.init( xmap.spacegroup(), xmap.cell(), g );
 
   // first determine the effective radius of the radial function
   const int nrad = 1000;
@@ -205,6 +204,7 @@ template<class T> bool MapFilter_fft<T>::operator() ( clipper::Xmap<T>& result, 
   map.fft_h_to_x( map.grid_real().size() / pow( xmap.cell().volume(), 2 ) );
 
   // store
+  result.init( xmap.spacegroup(), xmap.cell(), g );
   for ( typename Xmap<T>::Map_reference_index ix = result.first();
 	!ix.last(); ix.next() )
     result[ix] = map.real_data( ix.coord() );
@@ -219,7 +219,6 @@ template<class T> bool MapFilter_fft<T>::operator() ( clipper::NXmap<T>& result,
 {
   const MapFilterFn_base& fltr = *fltr_;
   const Grid& gnx = nxmap.grid();
-  result.init( gnx, nxmap.operator_orth_grid() );
 
   // Now make fft grid compatible with this NXmap grid
   Grid_sampling nuvw( gnx.nu()+2, gnx.nv()+2, gnx.nw()+2 );
@@ -316,6 +315,7 @@ template<class T> bool MapFilter_fft<T>::operator() ( clipper::NXmap<T>& result,
   map.fft_h_to_x( map.grid_real().size() );
 
   // store
+  result.init( gnx, nxmap.operator_orth_grid() );
   for ( MRI ix = nxmap.first(); !ix.last(); ix.next() )
     result[ix] = map.real_data( ix.coord()+l );
 

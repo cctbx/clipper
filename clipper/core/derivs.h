@@ -2,10 +2,10 @@
     Fundamental types for the clipper libraries
 */
 //C Copyright (C) 2000-2004 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
 //L
-//L  This library is free software and is distributed under the terms and
-//L  conditions of the CCP4 licence agreement as `Part 0' (Annex 2)
-//L  software, which is version 2.1 of the GNU Lesser General Public
+//L  This library is free software and is distributed under the terms
+//L  and conditions of version 2.1 of the GNU Lesser General Public
 //L  Licence (LGPL) with the following additional clause:
 //L
 //L     `You may also combine or link a "work that uses the Library" to
@@ -203,7 +203,7 @@ namespace clipper
   template<class T> Curv_orth<T> Curv_frac<T>::curv_orth( const Cell& cell ) const
   {
     Mat33<T> m( cell.matrix_frac() );
-    return Curv_frac<T>( m.transpose() * (*this) * m );
+    return Curv_orth<T>( m.transpose() * (*this) * m );
   }
 
   /*! \param g The grid concerned \return The transformed derivative. */

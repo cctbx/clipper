@@ -7,6 +7,10 @@
 #include "ccp4-extras.h"
 
 
+double sfunc( double q, int i, int j );
+double pfunc( double t, int nt );
+
+
 int main( int argc, char** argv )
 {
   CCP4program prog( "cfft", "0.1", "$Date: 2004/05/01" );
@@ -212,6 +216,47 @@ int main( int argc, char** argv )
       // now get stats of local standard deviation
       clipper::Map_stats m( lmom2 );
       std::cout << "\nLocal map statistics:\n Mean of local RMSD          : " << clipper::String( m.mean(), 12, 6 ) << "   RMSD of local RMSD: " << clipper::String( m.std_dev(), 12, 6 ) << "\n";
+
+      // next do some handidness checks
+      double s, sx, sy, sxx, syy, sxy;
+      s = sx = sy = sxx = syy = sxy = 0.0;
+      for ( ix = lmom1.first(); !ix.last(); ix.next() ) {
+	s += 1.0;
+	sx += lmom1[ix];
+	sy += lmom2[ix];
+	sxx += lmom1[ix]*lmom1[ix];
+	syy += lmom2[ix]*lmom2[ix];
+	sxy += lmom1[ix]*lmom2[ix];
+      }
+      int n = fphi.num_obs() - 2;
+      double r = (s*sxy-sx*sy)/sqrt((s*sxx-sx*sx)*(s*syy-sy*sy));
+      double t = r * sqrt( double(n) / ( 1.0 - r*r ) );
+      double p = 1.0 - pfunc( t, n );
+      std::cout << "\n Local mean/variance correlation : " << r << "\n";
+      std::cout << "\n Local mean/variance significance: " << t << " " << n << " " << p << "\n";
     }
   }
+}
+
+
+
+double sfunc( double q, int i, int j ) {
+  double s, t;
+  s = t = 1.0;
+  for ( int k = i; k <= j; k+= 2 ) {
+    t *= q*double(k)/double(k+1);
+    s += t;
+  }
+  return s;
+}
+
+double pfunc( double t, int nt ) {
+  double w = t / sqrt(double(nt));
+  double th = atan( w );
+  double c = cos(th);
+  double s = sin(th);
+  if ( nt%2 == 1 )
+    return 1.0-0.63662*(th+s*c*sfunc(c*c,2,nt-3));
+  else
+    return 1.0-(s*sfunc(c*c,1,nt-3));
 }

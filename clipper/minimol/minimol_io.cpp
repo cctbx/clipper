@@ -1,9 +1,9 @@
 /* minimol_io.cpp: atomic model types */
 //C Copyright (C) 2000-2004 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
 //L
-//L  This library is free software and is distributed under the terms and
-//L  conditions of the CCP4 licence agreement as `Part 0' (Annex 2)
-//L  software, which is version 2.1 of the GNU Lesser General Public
+//L  This library is free software and is distributed under the terms
+//L  and conditions of version 2.1 of the GNU Lesser General Public
 //L  Licence (LGPL) with the following additional clause:
 //L
 //L     `You may also combine or link a "work that uses the Library" to
@@ -154,7 +154,7 @@ void MMDBfile::import_minimol( MiniMol& minimol, const int hnd )
 		if ( p_atm->WhatIsSet & ASET_Occupancy )
 		  atm.set_occupancy( p_atm->occupancy );
 		if ( p_atm->WhatIsSet & ASET_tempFactor )
-		  atm.set_u_iso( p_atm->tempFactor );
+		  atm.set_u_iso( Util::b2u( p_atm->tempFactor ) );
 		if ( p_atm->WhatIsSet & ASET_Anis_tFac )
 		  atm.set_u_aniso_orth(
 		    U_aniso_orth( p_atm->u11, p_atm->u22, p_atm->u33,
@@ -312,7 +312,7 @@ void MMDBfile::export_minimol( const MiniMol& minimol )
           satm.db->WhatIsSet |= ASET_Occupancy;
         }
         if ( !Util::is_nan( satm.mm->u_iso() ) ) {      // set atom u_iso
-          satm.db->tempFactor = satm.mm->u_iso();
+          satm.db->tempFactor = Util::u2b( satm.mm->u_iso() );
           satm.db->WhatIsSet |= ASET_tempFactor;
         }
         if ( !satm.mm->u_aniso_orth().is_null() ) {     // set atom u_aniso

@@ -183,7 +183,7 @@ to ensure this restriction is obeyed.
 Importing and exporting Xmaps to or from CCP4 map files couldn't be
 easier. To import a map, use:
 \code
-  clipper::MAPfile file;
+  clipper::CCP4MAPfile file;
   file.open_read( "my.map" );
   file.import_xmap( xmap );
   file.close_read();
@@ -194,12 +194,9 @@ resulting map will always cover the preferred ASU. However, if there
 is insufficient information in the input map to obtain an ASU, the
 remaining portion of the map will be untouched.
 
-The clipper::MAPfile object also has methods for importing cell,
-spacegroup and grid samplings into a container hierarchy.
-
 To export a map, use:
 \code
-  clipper::MAPfile file;
+  clipper::CCP4MAPfile file;
   file.open_write( "my.map" );
   file.export_xmap( xmap );
   file.close_write();

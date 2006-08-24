@@ -142,7 +142,7 @@ int main( int argc, char** argv )
   for ( HRI ih = fo.first(); !ih.last(); ih.next() )
     if ( !fo[ih].missing() ) {
       Fo = fo[ih].f();
-      Fc = sqrt( rfn.f(ih) ) * fc[ih].f();
+      Fc = sqrt( clipper::Util::max( rfn.f(ih), 0.0 ) ) * fc[ih].f();
       if ( free[ih].flag() == freeflag ) {
 	r1f += fabs( Fo - Fc );
 	f1f += Fo;

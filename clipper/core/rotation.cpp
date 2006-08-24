@@ -1,9 +1,9 @@
 /* rotation.cpp: fundamental data types for the clipper libraries */
 //C Copyright (C) 2000-2004 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
 //L
-//L  This library is free software and is distributed under the terms and
-//L  conditions of the CCP4 licence agreement as `Part 0' (Annex 2)
-//L  software, which is version 2.1 of the GNU Lesser General Public
+//L  This library is free software and is distributed under the terms
+//L  and conditions of version 2.1 of the GNU Lesser General Public
 //L  Licence (LGPL) with the following additional clause:
 //L
 //L     `You may also combine or link a "work that uses the Library" to
@@ -156,9 +156,9 @@ Rotation::Rotation( const Euler_ccp4& euler )
 Rotation::Rotation( const Polar_ccp4& polar )
 {
   w_ = cos( 0.5 * polar.kappa() );
-  x_ = cos( polar.phi() ) * sin( polar.omega() );
-  y_ = sin( polar.phi() ) * sin( polar.omega() );
-  z_ =                      cos( polar.omega() );
+  x_ = sin( 0.5 * polar.kappa() ) * cos( polar.phi() ) * sin( polar.omega() );
+  y_ = sin( 0.5 * polar.kappa() ) * sin( polar.phi() ) * sin( polar.omega() );
+  z_ = sin( 0.5 * polar.kappa() ) *                      cos( polar.omega() );
 }
 
 Rotation::Rotation( const Mat33<>& m )
@@ -166,7 +166,7 @@ Rotation::Rotation( const Mat33<>& m )
   ftype tr = m(0,0) + m(1,1) + m(2,2) + 1.0;
 
   // check the diagonal
-  if (tr > 0.0) {
+  if ( tr > 1.0e-8 ) {
     ftype s( sqrt(tr) );
     w_ = s * 0.5;
     s = 0.5 / s;

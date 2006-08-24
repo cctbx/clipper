@@ -32,9 +32,9 @@ int main( int argc, char** argv )
     } else if ( args[arg] == "-colin-hl-2" ) {
       if ( ++arg < args.size() ) ipcolh2 = args[arg];
     } else if ( args[arg] == "-weight-hl-1" ) {
-      if ( ++arg < args.size() ) hlwt1 = clipper::String(args[arg]).i();
+      if ( ++arg < args.size() ) hlwt1 = clipper::String(args[arg]).f();
     } else if ( args[arg] == "-weight-hl-2" ) {
-      if ( ++arg < args.size() ) hlwt2 = clipper::String(args[arg]).i();
+      if ( ++arg < args.size() ) hlwt2 = clipper::String(args[arg]).f();
     } else if ( args[arg] == "-colout" ) {
       if ( ++arg < args.size() ) opcol = args[arg];
     } else {

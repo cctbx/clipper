@@ -193,15 +193,15 @@ int main()
     if ( fabs(r1[ix] - r2[ix]) > 0.001 )
       std::cout << ix.coord().format() << "  \t" << r1[ix] << "  \t" << r2[ix] << "\n";
 
-  MapFilterFn_step step( 8.5 );
+  MapFilterFn_step step( 2.5 );
   MapFilter_slow<float> fltr1( step, 1.0, MapFilter_slow<float>::Relative );
   MapFilter_fft<float>  fltr2( step, 1.0, MapFilter_fft<float>::Relative );
-  Xmap<float> f1, f2, f3;
+  Xmap<float> f1, f2;
   fltr1( f1, xmap );
   fltr2( f2, xmap );
 
   for ( ix = xmap.first(); !ix.last(); ix.next() )
-    if ( fabs(f1[ix] - f2[ix]) > -0.001 )
+    if ( fabs(f1[ix] - f2[ix]) > 0.001 )
       std::cout << ix.coord().format() << "  \t" << f1[ix] << "  \t" << f2[ix] << "  \t" << xmap[ix] << "\n";
 
   Grid_range gr( Coord_grid(0,0,0),
@@ -218,7 +218,7 @@ int main()
   fltr2( nxr, nxmap );
   std::cout << "done filter\n";
 
-  f3.init( xmap.spacegroup(), xmap.cell(), xmap.grid_sampling() );
+  Xmap<float> f3( xmap.spacegroup(), xmap.cell(), xmap.grid_sampling() );
   for ( inx = nxmap.first(); !inx.last(); inx.next() )
     f3.set_data( inx.coord() + gr.min(), nxr[inx] );
 

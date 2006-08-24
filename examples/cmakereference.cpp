@@ -31,7 +31,8 @@ int main( int argc, char** argv )
   clipper::String pdbid = "NONE";
   clipper::String pdbfilez = "NONE";
   clipper::String rflfilez = "NONE";
-  clipper::String opfile = "NONE";
+  clipper::String mtzout = "NONE";
+  clipper::String pdbout = "NONE";
   clipper::Resolution reso;
   bool bulk = true;
   int n_refln = 1000;
@@ -49,7 +50,9 @@ int main( int argc, char** argv )
     } else if ( args[arg] == "-cifin" ) {
       if ( ++arg < args.size() ) rflfilez = args[arg];
     } else if ( args[arg] == "-mtzout" ) {
-      if ( ++arg < args.size() ) opfile = args[arg];
+      if ( ++arg < args.size() ) mtzout = args[arg];
+    } else if ( args[arg] == "-pdbout" ) {
+      if ( ++arg < args.size() ) pdbout = args[arg];
     } else if ( args[arg] == "-resolution" ) {
       if ( ++arg < args.size() ) reso = clipper::Resolution( clipper::String(args[arg]).f() );
     } else if ( args[arg] == "-num-reflns" ) {
@@ -71,7 +74,8 @@ int main( int argc, char** argv )
   }
 
   // post input
-  if ( opfile == "NONE" ) opfile = pdbid+".mtz";
+  if ( mtzout == "NONE" ) mtzout = "reference-"+pdbid+".mtz";
+  if ( pdbout == "NONE" ) pdbout = "reference-"+pdbid+".pdb";
 
   // ftp settings
   // db specific
@@ -161,7 +165,7 @@ int main( int argc, char** argv )
 
   // make data objects
   clipper::CIFfile cifin;
-  clipper::CCP4MTZfile mtzout;
+  clipper::CCP4MTZfile mtzfile;
   clipper::HKL_info hkls_in;
   double bulkfrc, bulkscl;
   typedef clipper::HKL_data_base::HKL_reference_index HRI;
@@ -223,13 +227,14 @@ int main( int argc, char** argv )
   abcd.compute( phiw, clipper::data32::Compute_abcd_from_phifom() );
 
   // output data
-  mtzout.open_write( opfile );
-  mtzout.export_hkl_info( hkls );
-  mtzout.export_hkl_data( fo,   "/*/*/FP" );
-  mtzout.export_hkl_data( abcd, "/*/*/FC" );
-  mtzout.export_hkl_data( fb,   "/*/*/FC_BEST" );
-  mtzout.export_hkl_data( fd,   "/*/*/FC_DIFF" );
-  mtzout.close_write();
+  mtzfile.open_write( mtzout );
+  mtzfile.export_hkl_info( hkls );
+  mtzfile.export_hkl_data( fo,   "/*/*/FP" );
+  mtzfile.export_hkl_data( abcd, "/*/*/FC" );
+  mtzfile.export_hkl_data( fb,   "/*/*/FC_BEST" );
+  mtzfile.export_hkl_data( fd,   "/*/*/FC_DIFF" );
+  mtzfile.close_write();
+  mmdb.WritePDBASCII( (char*)pdbout.c_str() );
 
   // now calc R and R-free
   std::vector<double> params( n_param, 1.0 );
@@ -241,7 +246,7 @@ int main( int argc, char** argv )
   for ( HRI ih = fo.first(); !ih.last(); ih.next() )
     if ( !fo[ih].missing() ) {
       Fo = fo[ih].f();
-      Fc = sqrt( rfn.f(ih) ) * fc[ih].f();
+      Fc = sqrt( clipper::Util::max( rfn.f(ih), 0.0 ) ) * fc[ih].f();
       r1w += fabs( Fo - Fc );
       f1w += Fo;
     }

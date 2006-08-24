@@ -152,7 +152,7 @@ To import a datalist from an MTZ files we need an HKL_info object to
 hold the reflection list and an HKL_data object to hold the actual
 data. We also need MTZdataset and MTZcrystal objects to hold the
 additional information which will be returned from the MTZ file. Then
-we create an MTZfile object, open it onto a file, and read the
+we create a CCP4MTZfile object, open it onto a file, and read the
 reflection list and data.
 \code
   clipper::HKL_info myhkl;            // define objects
@@ -160,28 +160,10 @@ reflection list and data.
   clipper::MTZcrystal myxtl;
   clipper::HKL_data<clipper::data32::F_phi> fphidata( myhkl, myxtl );
 
-  clipper::MTZfile mtzin;
+  clipper::CCP4MTZfile mtzin;
   mtzin.open_read( "my.mtz" );        // open new file
   mtzin.import_hkl_info( myhkl );     // read sg, cell, reso, hkls
   mtzin.import_hkl_data( fphidata, myset, myxtl, "native/CuKa/[FCAL PHICAL]" );
-  mtzin.close_read();
-\endcode
-
-The same process is more elegantly achieved using containers, allowing
-all the information read from the reflection file to become part of a
-hierarchy. CMTZcrystal and CMTZdataset objects will be inserted in the
-hierarchy between the HKL_info and HKL_data objects.
-\code
-  clipper::CSpacegroup myspgr();      // define objects
-  clipper::CCell mycell( myspgr );
-  clipper::CResolution myreso( mycell );
-  clipper::CHKL_info myhkl( myreso );
-  clipper::CHKL_data<clipper::data32::F_phi> fphidata( myhkl );
-
-  clipper::MTZfile mtzin;
-  mtzin.open_read( "my.mtz" );        // open new file
-  mtzin.import_hkl_info( myhkl );    // read sg, cell, reso, hkls
-  mtzin.import_chkl_data( fphidata, "native/CuKa/[FCAL PHICAL]" );
   mtzin.close_read();
 \endcode
 

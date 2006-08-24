@@ -1,8 +1,7 @@
-/*! \file lib/clipper_precision.h
-    Header file for clipper precision
+/*! \file ccp4_utils.h
+    Header file for CCP4 utilities for the clipper libraries
 */
-//C Copyright (C) 2000-2004 Kevin Cowtan and University of York
-//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2006 Kevin Cowtan and University of York
 //L
 //L  This library is free software and is distributed under the terms
 //L  and conditions of version 2.1 of the GNU Lesser General Public
@@ -43,27 +42,32 @@
 //L  MA 02111-1307 USA
 
 
-#ifndef CLIPPER_PRECISION
-#define CLIPPER_PRECISION
+#ifndef CLIPPER_MTZ_UTILS
+#define CLIPPER_MTZ_UTILS
 
 
-namespace clipper
+#include <vector>
+#include <string>
+
+
+//! Mini-parser for command line input
+/*! This class removes any escape characters from the command-line,
+  and if a -stdin option is present reads standard input and adds the
+  result to the argument list. */
+class CCP4CommandInput : public std::vector<std::string>
 {
+ public:
+  CCP4CommandInput( int argc, char** argv, bool echo = false );
+};
 
 
-  typedef float  ftype32;
-  typedef double ftype64;
-
-  //! ftype definition for floating point representation
-  /*! This type is used for all floating point values except data.
-    The whole package could be templatised on ftype. However for now
-    it is typedef'ed */
-  typedef ftype64 ftype;
-
-  //! xtype definition for import/export of data
-  typedef ftype64 xtype;
-
-}  // namespace clipper
+//! class for program start and end
+class CCP4Program
+{
+ public:
+  CCP4Program( const char* name, const char* vers, const char* rcsdate );
+  ~CCP4Program();
+};
 
 
 #endif

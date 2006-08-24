@@ -1,9 +1,9 @@
 /* spacegroup_data.cpp: spacegroup data tables */
 //C Copyright (C) 2000-2004 Kevin Cowtan and University of York
+//C Copyright (C) 2000-2005 Kevin Cowtan and University of York
 //L
-//L  This library is free software and is distributed under the terms and
-//L  conditions of the CCP4 licence agreement as `Part 0' (Annex 2)
-//L  software, which is version 2.1 of the GNU Lesser General Public
+//L  This library is free software and is distributed under the terms
+//L  and conditions of version 2.1 of the GNU Lesser General Public
 //L  Licence (LGPL) with the following additional clause:
 //L
 //L     `You may also combine or link a "work that uses the Library" to
@@ -567,7 +567,7 @@ SGdata sgdata[] = {
   {0xdd05fe66,"I 4bw -1bw"      ,"I 41/a"    ,'1', 88},
   {0xf5a09fa3,"-I 4ad"          ,"I 41/a"    ,'2', 88},
   {0x781566a5,"P 4 2"           ,"P 4 2 2"   ,' ', 89},
-  {0x529dbafe,"P 4ab 2ab"       ,"P 42 1 2"  ,' ', 90},
+  {0x529dbafe,"P 4ab 2ab"       ,"P 4 21 2"  ,' ', 90},
   {0x1129373c,"P 4w 2c"         ,"P 41 2 2"  ,' ', 91},
   {0x7abbc4b0,"P 4abw 2nw"      ,"P 41 21 2" ,' ', 92},
   {0x00a13651,"P 4c 2"          ,"P 42 2 2"  ,' ', 93},
@@ -644,8 +644,8 @@ SGdata sgdata[] = {
   {0x33d17284,"P 31 2\""        ,"P 31 2 1"  ,' ',152},
   {0xe39f36b4,"P 32 2c (0 0 -1)","P 32 1 2"  ,' ',153},
   {0x47ac9be5,"P 32 2\""        ,"P 32 2 1"  ,' ',154},
-  {0x46ebee09,"R 3 2\""         ,"R 32"      ,'H',155},
-  {0xa20b8591,"P 3* 2"          ,"R 32"      ,'R',155},
+  {0x46ebee09,"R 3 2\""         ,"R 3 2"     ,'H',155},
+  {0xa20b8591,"P 3* 2"          ,"R 3 2"     ,'R',155},
   {0x9f4cffaa,"P 3 -2\""        ,"P 3 m 1"   ,' ',156},
   {0x39859b12,"P 3 -2"          ,"P 3 1 m"   ,' ',157},
   {0xe04fe588,"P 3 -2\"c"       ,"P 3 c 1"   ,' ',158},
